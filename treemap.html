@@ -24,23 +24,194 @@ form {
   text-indent: 2px;
 }
 
+   body, div.tooltip {
+      color: white;
+      background-color: #272822;
+    }
+
+    text, body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+      /*font-weight: bold;*/
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    p {
+      color: lightgray;
+    }
+
+    svg {
+    }
+
+    p.overview,  p.credits {
+      width: 940px;
+      font-size: 12px;
+    }
+    
+    p.overview a, p.credits a {
+      color: white;
+    }
+    
+    p.credits {
+      text-align: center;
+      font-size: 10px;
+    }
+
+    #numberOfAttacksHeader {
+      text-align: center;
+    }
+    #numberOfAttacks {
+      font-size: 30px;
+      font-weight: bold;
+      color: red;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .timeRangeWrapper .axis path, .timeRangeWrapper .axis line, 
+    .tooltipTimeRangeWrapper .axis path, .tooltipTimeRangeWrapper .axis line {
+      fill: none;
+      stroke: white;
+      shape-rendering: crispEdges;
+    }
+
+    .timeRangeWrapper .axis text, 
+    .tooltipTimeRangeWrapper .axis text {
+      stroke: white;
+    }
+
+    .timeRangeWrapper .brush .extent {
+      fill-opacity: .4;
+      shape-rendering: crispEdges;
+    }
+
+    .timeRangeWrapper .brush .resize path {
+      fill: #666;
+      fill-opacity: .8;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+
+    .country {
+      fill: none;
+      stroke: white;
+    }
+
+    .polarWrapper .line-axis, .polarWrapper .circle-axis {
+      fill: none;
+      stroke: darkgray;
+    }
+
+    .polarWrapper .line-ticks, .polarWrapper .circle-ticks {
+      stroke: lightgray;
+    }
+
+    .polarWrapper .line {
+      opacity: 0.7;
+    }
+
+    .polarMean {
+      stroke: white;
+      stroke-width: 3;
+      stroke-dasharray: 10,5;
+    }
+
+    .polarAttack {
+      stroke: red;
+      stroke-width: 4;
+    }
+
+    .dataTable {
+      width: 100%;
+    }
+
+    table {
+      border: none;
+    }
+
+    table td {
+      vertical-align: top;
+    }
+
+    .mapWrapper {
+      clip-path: url(#bubbleMapClipper);
+    }
+
+    .mapAttack {
+      fill: white;
+      opacity: 0.4;
+      stroke-width: .1;
+    }
+
+    .hideAttack {
+      fill-opacity: 0.2;
+      stroke-opacity: 0.8;
+      stroke-width: .1;
+    }
+
+    .mapOverlay {
+      fill: none;
+      pointer-events: all;
+    }
+
+    div.tooltip {
+      position: absolute;
+      padding: 4px;
+      font: 12px sans-serif;
+      border: 1px solid white;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    div#filterSelectors {
+      position: absolute;
+      padding: 4px;
+      border: 1px solid white;
+      border-radius: 8px;
+      background-color: #272822;
+    }
+
 </style>
-<form>
-  <label><input type="radio" name="mode" value="size" checked> Size</label>
-  <label><input type="radio" name="mode" value="count"> Count</label>
-</form>
+<table>
+  <tr>
+    <td>
+<h1>Kaun Hai Sachey Voters</h1>
+</td>
+</tr>
+<tr>
+<td>
+  <img src="images2.jpeg" />
+</td>
+<td>
+  <label><input type="radio" name="mode" value="size" checked> Individual Score</label>
+  <label><input type="radio" name="mode" value="count"> Group Score</label>
+
+<div  id="selectorstate">Select State </div>
+
+  <div  id="selectorcity" width="350">Select City </div></td>
+</tr>
+</table>
+ 
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="../libs/jquery-1.11.0.min.js"></script>
 <script>
 
+console.log("Here")
 var margin = {top: 40, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var color = d3.scale.category20c();
+var color = d3.scale.linear()
+.domain([4, 7])
+    .interpolate(d3.interpolateRgb)
+    .range(["red", "green"]);
 
 var treemap = d3.layout.treemap()
     .size([width, height])
-    .sticky(true)
+    .sticky(false)
     .value(function(d) { return d.ind_score; });
 
 var div = d3.select("body").append("div")
@@ -49,17 +220,78 @@ var div = d3.select("body").append("div")
     .style("height", (height + margin.top + margin.bottom) + "px")
     .style("left", margin.left + "px")
     .style("top", margin.top + "px");
+/*
+d3.select("body").append("button").text("Show").on({
+    "click":changePro
+})
+
+*/
+
+
+
+
+var DropdownChanged = function(d,i){
+    console.log("Changed")
+};
+
+
+var changePro = function(d,i){
+    var sel_state = $("#selectorstate option:selected").text();
+    var sel_city = $("#selectorcity option:selected").val()
+};
+
+d3.csv("../data/worldBank_indicators.csv", function(error,mapdata){
+    mapping = mapdata
+    indicators = mapdata
+    //fdata = data;
+    var dropDown = d3.selectAll("#selectorstate").append("select")
+    var options = dropDown.selectAll("option")
+            .data(["Maharashtra","Gujarat"])
+            .enter()
+            .append("option")
+            .text(function (d,i) { 
+                return d; })
+            .attr("selected", 
+                function (d) { if (d.IndicatorCode == "allsi.bi_q1" ) { return "selected" } })
+    citydata = [1,2]
+    console.log("#selectorstate option:selected;", $("#selectorstate option:selected").text())
+    if($("#selectorstate option:selected").text() == "Maharashtra")
+      citydata = ["Ahmednagar",
+"Parner",
+"Rahuri",
+"Shrigonda",
+"Shrirampur"
+]
+    else 
+      citydata = ["Abdasa",
+"Anjar",
+"Bhuj",
+"Gandhidham",
+"Mandvi"]
+    var dropDown2 = d3.selectAll("#selectorcity").append("select")
+    var options2 = dropDown2.selectAll("option")
+            .data(citydata)
+            .enter()
+            .append("option")
+            .text(function (d,i) { 
+                return d; })
+            .attr("value", function (d) { return d; })
+    
+    //runAQueryOn(error, indicators, data)
+})
+
 
 //d3.json("flare.json", function(error, root) {
-//  d3.json("data.json", function(error, root) {
-  d3.json("data.json", function(error, root) {
+// d3.json("../data/data.json", function(error, root) {
+  d3.json("../data/Maharashtra/Parner.json", function(error, root) {
+    console.log("root on load", root)
   var node = div.datum(root).selectAll(".node")
       .data(treemap.nodes)
     .enter().append("div")
       .attr("class", "node")
       .call(position)
-      .style("background", function(d) { return d.children ? color(d.name) : null; })
-      .text(function(d) { return d.children ? null : d.name; });
+      .style("background", function(d) { return color(d.ind_score); })
+      .text(function(d) { return d.children ? null : d.voter_id; });
 
   d3.selectAll("input").on("change", function change() {
     var value = this.value === "count"
@@ -72,6 +304,15 @@ var div = d3.select("body").append("div")
         .duration(1500)
         .call(position);
   });
+
+  d3.selectAll("selectorstate").on("change", function change() {
+
+    var value = this.value === "Maharashtra"
+        ? function() {console.log("Maharashtra"); return 1; }
+        : function(d) { console.log("Gujarat"); return d.ind_score; };
+  });
+
+
 });
 
 function position() {
@@ -80,5 +321,99 @@ function position() {
       .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
       .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
 }
+
+$("#selectorcity").change(function () {
+    console.log("selectorcity")   
+     console.log("Selected CIty:", $("#selectorcity option:selected").text())
+     var filetoopen = $("#selectorcity option:selected").text() + ".json"
+    
+     d3.json("../data/Maharashtra/Ahmednagar.json", function(error, root) {
+    console.log("root on second", root)
+
+    var treemap1 = d3.layout.treemap()
+    .size([width, height])
+    .sticky(false)
+    .value(function(d) { return d.ind_score; });
+
+var div = d3.select("body").append("div")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+  var node1 = div.datum(root).selectAll(".node")
+      .data(treemap1.nodes)
+    .enter().append("div")
+      .attr("class", "node")
+      .call(position)
+      .style("background", function(d) { return color(d.ind_score); })
+      .text(function(d) { return d.children ? null : d.ind_score; });
+
+  d3.selectAll("input").on("change", function change() {
+    var value = this.value === "count"
+        ? function() { return 1; }
+        : function(d) { return d.ind_score; };
+
+    node1
+        .data(treemap1.value(value).nodes)
+      .transition()
+        .duration(1500)
+        .call(position);
+  });
+
+  d3.selectAll("selectorstate").on("change", function change() {
+
+    var value = this.value === "Maharashtra"
+        ? function() {console.log("Maharashtra"); return 1; }
+        : function(d) { console.log("Gujarat"); return d.ind_score; };
+  });
+
+
+});
+
+})
+
+$("#selectorstate").change(function () {
+    console.log("selectorsssstate") 
+    if($("#selectorstate option:selected").text() == "Maharashtra")
+      citydata = ["Ahmednagar",
+"Parner",
+"Rahuri",
+"Shrigonda",
+"Shrirampur"
+]
+    else 
+      citydata = ["Abdasa",
+"Anjar",
+"Bhuj",
+"Gandhidham",
+"Mandvi"]
+console.log("11", citydata)
+console.log("22")
+var dropDown2 = d3.selectAll("#selectorcity"); //.append("select")
+console.log("33")
+    var options2 = dropDown2.selectAll("option")
+            .data(["Choose"])
+            .enter()
+            .append("option")
+            .text(function (d,i) { 
+                return d; })
+            .attr("value", function (d) { return d; })  
+            console.log("44")
+
+//var dropDown2 = d3.selectAll("#selectorcity").append("select")
+console.log("33")
+    var options2 = dropDown2.selectAll("option")
+            .data(citydata)
+            .enter()
+            .append("option")
+            .text(function (d,i) { 
+                return d; })
+            .attr("value", function (d) { return d; })  
+            console.log("44")
+//d3.selectAll("#selectorcity").remove();
+
+});
 
 </script>
